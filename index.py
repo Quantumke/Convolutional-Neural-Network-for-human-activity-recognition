@@ -41,6 +41,22 @@ class track_humans():
         for activity in np.unique(dataset["activity"]):
             subset = dataset[dataset["activity"] == activity][:180]
             plot_activity(activity,subset)
+    def windows(data, size):
+        start = 0
+        while start < data.count():
+            yield start, start + size
+            start += (size / 2)
+    def segment_signal(data,window_size = 90):
+        segments = np.empty((0,window_size,3))
+        labels = np.empty((0))
+        for (start, end) in windows(data["timestamp"], window_size):
+            x = data["x-axis"][start:end]
+            y = data["y-axis"][start:end]
+            z = data["z-axis"][start:end]
+            if(len(dataset["timestamp"][start:end]) == window_size):
+                segments = np.vstack([segments,np.dstack([x,y,z])])
+                labels = np.append(labels,stats.mode(data["activity"][start:end])[0][0])
+        return segments, labels
 
     
 
