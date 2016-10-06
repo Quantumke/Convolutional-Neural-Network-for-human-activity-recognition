@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from scipy import stats
 import tensorflow as tf
 
-%matplotlib inline
+#matplotlib inline
 plt.style.use('ggplot')
 
 class track_humans():
@@ -26,7 +26,7 @@ class track_humans():
         zx.plot(x,y)
         ax.set_title(title)
         ax.xaxis.set_visible(False)
-        ax.set_ylim([min(y)=np.std(y),max(y) + np.std(y)])
+        ax.set_ylim([min(y) - np.std(y), max(y) + np.std(y)])
         ax.set_xlim([min(x), max(y)])
         ax.grid(True)
     def plot_activity(activity, data):
@@ -38,7 +38,14 @@ class track_humans():
         fig.suptitle(activity)
         plt.subplots_adjust(top=0.90)
         plt.show()
+        for activity in np.unique(dataset["activity"]):
+            subset = dataset[dataset["activity"] == activity][:180]
+            plot_activity(activity,subset)
 
     
 
 app=track_humans()
+dataset = read_data('actitracker_raw.txt')
+dataset['x-axis'] = feature_normalize(dataset['x-axis'])
+dataset['y-axis'] = feature_normalize(dataset['y-axis'])
+dataset['z-axis'] = feature_normalize(dataset['z-axis'])
