@@ -57,6 +57,33 @@ class track_humans():
                 segments = np.vstack([segments,np.dstack([x,y,z])])
                 labels = np.append(labels,stats.mode(data["activity"][start:end])[0][0])
         return segments, labels
+    input_height = 1
+    input_width = 90
+    num_labels = 6
+    num_channels = 3
+    batch_size = 10
+    kernel_size = 60
+    depth = 60
+    num_hidden = 1000
+    learning_rate = 0.0001
+    training_epochs = 5
+    total_batchs = reshaped_segments.shape[0] // batch_size
+    def weight_variable(shape):
+        initial = tf.truncated_normal(shape, stddev = 0.1)
+        return tf.Variable(initial)
+    def bias_variable(shape):
+        initial = tf.constant(0.0, shape = shape)
+        return tf.Variable(initial)
+    def depthwise_conv2d(x, W):
+        return tf.nn.depthwise_conv2d(x,W, [1, 1, 1, 1], padding='VALID')
+    def apply_depthwise_conv(x,kernel_size,num_channels,depth):
+        weights = weight_variable([1, kernel_size, num_channels, depth])
+        biases = bias_variable([depth * num_channels])
+        return tf.nn.relu(tf.add(depthwise_conv2d(x, weights),biases))
+    def apply_max_pool(x,kernel_size,stride_size):
+        return tf.nn.max_pool(x, ksize=[1, 1, kernel_size, 1],
+                              strides=[1, 1, stride_size, 1], padding='VALID')
+
 
     
 
