@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from scipy import stats
 import tensorflow as tf
 
-#matplotlib inline
 plt.style.use('ggplot')
 
 class track_humans():
