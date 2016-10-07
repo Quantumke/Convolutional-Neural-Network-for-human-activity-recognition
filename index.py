@@ -83,6 +83,19 @@ class track_humans():
     def apply_max_pool(x,kernel_size,stride_size):
         return tf.nn.max_pool(x, ksize=[1, 1, kernel_size, 1],
                               strides=[1, 1, stride_size, 1], padding='VALID')
+    cost_history = np.empty(shape=[1],dtype=float)
+    with tf.Session() as session:
+        tf.initialize_all_variables().run()
+        for epoch in range(training_epochs):
+            for b in range(total_batchs):
+                offset = (b * batch_size) % (train_y.shape[0] - batch_size)
+                batch_x = train_x[offset:(offset + batch_size), :, :, :]
+                batch_y = train_y[offset:(offset + batch_size), :]
+                c = session.run([optimizer, loss],feed_dict={X: batch_x, Y : batch_y})
+                cost_history = np.append(cost_history,c)
+                print "Epoch: ",epoch," Training Loss: ",c," Training Accuracy: ",
+                session.run(accuracy, feed_dict={X: train_x, Y: train_y})
+            print "Testing Accuracy:", session.run(accuracy, feed_dict={X: test_x, Y: test_y})
 
 
     
